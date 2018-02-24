@@ -9,7 +9,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity() {
     companion object {
-        const val PICK_FILE_REQUEST: Int = 1
+        private const val PICK_FILE_REQUEST: Int = 1
+        public const val BOOKMARK_DATA = "TAG_BOOKMARK_DATA"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +34,9 @@ class MainActivity : Activity() {
                     val parser = BookmarkParser(reader)
                     try {
                         val result = parser.parse()
+                        val intent = Intent(this, BookmarkViewActivity::class.java)
+                        intent.putExtra(BOOKMARK_DATA, result)
+                        startActivity(intent)
                     } catch (_: BookmarkParseException) {
                         Toast.makeText(this, "Parse failed", Toast.LENGTH_SHORT).show()
                     }
