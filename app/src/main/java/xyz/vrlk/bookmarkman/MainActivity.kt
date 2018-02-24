@@ -6,10 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 
-const val PICK_FILE_REQUEST: Int = 1
-
 
 class MainActivity : Activity() {
+    companion object {
+        const val PICK_FILE_REQUEST: Int = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
