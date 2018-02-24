@@ -3,7 +3,7 @@ package xyz.vrlk.bookmarkman
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -31,8 +31,11 @@ class MainActivity : Activity() {
                 if (r != null) {
                     val reader = contentResolver.openInputStream(r).bufferedReader()
                     val parser = BookmarkParser(reader)
-                    val result = parser.parse()
-                    Log.d("", result.toString())
+                    try {
+                        val result = parser.parse()
+                    } catch (_: BookmarkParseException) {
+                        Toast.makeText(this, "Parse failed", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

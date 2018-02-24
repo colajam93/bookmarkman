@@ -74,169 +74,149 @@ class BookmarkParser(reader: BufferedReader) {
     }
 
     private fun parseHeader(): Boolean {
-        try {
-            next()
-            // start document
-            expectTrue({current == XmlPullParser.START_DOCUMENT})
+        next()
+        // start document
+        expectTrue({ current == XmlPullParser.START_DOCUMENT })
 
-            // The doctype declaration and comment is simply ignored
+        // The doctype declaration and comment is simply ignored
 
-            // meta and title
+        // meta and title
+        next()
+        if (current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "meta") {
+            // We skip the meta tag for encoding
+            // This is not included in the specification but
+            // an bookmark file exported from the Google Chrome includes this tag.
             next()
-            if (current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "meta") {
-                // We skip the meta tag for encoding
-                // This is not included in the specification but
-                // an bookmark file exported from the Google Chrome includes this tag.
-                next()
-            }
-            expectTrue({current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "title"})
-            next()
-            expectTrue({current == XmlPullParser.TEXT && xpp.text == "Bookmarks"})
-            next()
-            expectTrue({current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "title"})
-
-            // H1
-            next()
-            expectTrue({current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "h1"})
-            next()
-            expectTrue({current == XmlPullParser.TEXT && xpp.text == "Bookmarks"})
-            next()
-            expectTrue({current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "h1"})
-        } catch (e: BookmarkParseException) {
-            throw e
         }
+        expectTrue({ current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "title" })
+        next()
+        expectTrue({ current == XmlPullParser.TEXT && xpp.text == "Bookmarks" })
+        next()
+        expectTrue({ current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "title" })
+
+        // H1
+        next()
+        expectTrue({ current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "h1" })
+        next()
+        expectTrue({ current == XmlPullParser.TEXT && xpp.text == "Bookmarks" })
+        next()
+        expectTrue({ current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "h1" })
 
         return true
     }
 
     private fun parseItems(): Items? {
-        try {
-            val items = Items()
-            next()
-            expectTrue({current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "dl"})
+        val items = Items()
+        next()
+        expectTrue({ current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "dl" })
 
-            while (true) {
-                next()
-                if (current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "dl") {
-                    break
-                }
-                val item = parseItem()
-                if (item == null) {
-                    break
-                } else {
-                    items.items.add(item)
-                }
-            }
+        while (true) {
             next()
-            if (current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "p") {
-                // Skip the p tag in the beginning of file
-                // (I think) This is not included in the specification but
-                // an bookmark file exported from the Google Chrome includes this tag.
-                next()
+            if (current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "dl") {
+                break
             }
-            expectTrue({current == XmlPullParser.END_DOCUMENT})
-            return items
-        } catch (e: BookmarkParseException) {
-            throw e
+            val item = parseItem()
+            if (item == null) {
+                break
+            } else {
+                items.items.add(item)
+            }
         }
+        next()
+        if (current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "p") {
+            // Skip the p tag in the beginning of file
+            // (I think) This is not included in the specification but
+            // an bookmark file exported from the Google Chrome includes this tag.
+            next()
+        }
+        expectTrue({ current == XmlPullParser.END_DOCUMENT })
+        return items
     }
 
     private fun parseItem(): Item? {
-        try {
-            if (current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "p") {
-                // Skip the p tag in the beginning of file
-                // (I think) This is not included in the specification but
-                // an bookmark file exported from the Google Chrome includes this tag.
-                next()
-            }
-            expectTrue({current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "dt"})
+        if (current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "p") {
+            // Skip the p tag in the beginning of file
+            // (I think) This is not included in the specification but
+            // an bookmark file exported from the Google Chrome includes this tag.
             next()
-            if (current == XmlPullParser.START_TAG) {
-                if (xpp.name.toLowerCase() == "h3") {
-                    return parseSubfolder()
-                } else if (xpp.name.toLowerCase() == "a") {
-                    return parseShortcut()
-                }
+        }
+        expectTrue({ current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "dt" })
+        next()
+        if (current == XmlPullParser.START_TAG) {
+            if (xpp.name.toLowerCase() == "h3") {
+                return parseSubfolder()
+            } else if (xpp.name.toLowerCase() == "a") {
+                return parseShortcut()
             }
-        } catch (e: BookmarkParseException) {
-            throw e
         }
         return null
     }
 
     private fun parseSubfolder(): Subfolder? {
-        try {
-            val subfolder = Subfolder()
-            expectTrue({current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "h3"})
-            if (xpp.attributeCount > 0) {
-                for (i in 0 until xpp.attributeCount) {
-                    val name = xpp.getAttributeName(i).toLowerCase()
-                    if (name == "add_date") {
-                        subfolder.addDate = xpp.getAttributeValue(i)
-                        break
-                    }
-                }
-            }
-
-            next()
-            expectTrue({current == XmlPullParser.TEXT})
-            subfolder.title = xpp.text
-
-            next()
-            expectTrue({current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "h3"})
-
-            next()
-            expectTrue({current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "dl"})
-
-            next()
-            expectTrue({current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "p"})
-
-            while (true) {
-                next()
-                if (current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "dl") {
+        val subfolder = Subfolder()
+        expectTrue({ current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "h3" })
+        if (xpp.attributeCount > 0) {
+            for (i in 0 until xpp.attributeCount) {
+                val name = xpp.getAttributeName(i).toLowerCase()
+                if (name == "add_date") {
+                    subfolder.addDate = xpp.getAttributeValue(i)
                     break
                 }
-                val item = parseItem()
-                if (item == null) {
-                    break
-                } else {
-                    subfolder.items.add(item)
-                }
             }
-
-            next()
-            expectTrue({current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "p"})
-            return subfolder
-        } catch (e: BookmarkParseException) {
-            throw e
         }
+
+        next()
+        expectTrue({ current == XmlPullParser.TEXT })
+        subfolder.title = xpp.text
+
+        next()
+        expectTrue({ current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "h3" })
+
+        next()
+        expectTrue({ current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "dl" })
+
+        next()
+        expectTrue({ current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "p" })
+
+        while (true) {
+            next()
+            if (current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "dl") {
+                break
+            }
+            val item = parseItem()
+            if (item == null) {
+                break
+            } else {
+                subfolder.items.add(item)
+            }
+        }
+
+        next()
+        expectTrue({ current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "p" })
+        return subfolder
     }
 
     private fun parseShortcut(): Shortcut? {
-        try {
-            val shortcut = Shortcut()
-            expectTrue({current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "a"})
-            if (xpp.attributeCount > 0) {
-                for (i in 0 until xpp.attributeCount) {
-                    val name = xpp.getAttributeName(i).toLowerCase()
-                    when (name) {
-                        "href" -> shortcut.url = xpp.getAttributeValue(i)
-                        "add_date" -> shortcut.addDate = xpp.getAttributeValue(i)
-                        "last_visit" -> shortcut.lastVisit = xpp.getAttributeValue(i)
-                        "last_modified" -> shortcut.lastModified = xpp.getAttributeValue(i)
-                    }
+        val shortcut = Shortcut()
+        expectTrue({ current == XmlPullParser.START_TAG && xpp.name.toLowerCase() == "a" })
+        if (xpp.attributeCount > 0) {
+            for (i in 0 until xpp.attributeCount) {
+                val name = xpp.getAttributeName(i).toLowerCase()
+                when (name) {
+                    "href" -> shortcut.url = xpp.getAttributeValue(i)
+                    "add_date" -> shortcut.addDate = xpp.getAttributeValue(i)
+                    "last_visit" -> shortcut.lastVisit = xpp.getAttributeValue(i)
+                    "last_modified" -> shortcut.lastModified = xpp.getAttributeValue(i)
                 }
             }
-
-            next()
-            expectTrue({current == XmlPullParser.TEXT})
-            shortcut.title = xpp.text
-
-            next()
-            expectTrue({current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "a"})
-            return shortcut
-        } catch (e: BookmarkParseException) {
-            throw e
         }
+
+        next()
+        expectTrue({ current == XmlPullParser.TEXT })
+        shortcut.title = xpp.text
+
+        next()
+        expectTrue({ current == XmlPullParser.END_TAG && xpp.name.toLowerCase() == "a" })
+        return shortcut
     }
 }
