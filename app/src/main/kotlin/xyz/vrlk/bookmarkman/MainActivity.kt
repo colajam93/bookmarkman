@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : Activity() {
     companion object {
         private const val PICK_FILE_REQUEST: Int = 1
-        public const val BOOKMARK_DATA = "TAG_BOOKMARK_DATA"
+        const val BOOKMARK_DATA = "TAG_BOOKMARK_DATA"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

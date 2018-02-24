@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import kotlinx.android.synthetic.main.bookmark_item_view.view.textView
 
-class BookmarkItemAdapter(val context: Context, val items: List<Item>) : BaseAdapter() {
+class BookmarkItemAdapter(private val context: Context, val items: List<Item>) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = View.inflate(context, R.layout.bookmark_item_view, null)
         val data = items[position]

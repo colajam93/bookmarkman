@@ -3,7 +3,6 @@ package xyz.vrlk.bookmarkman
 import android.app.Activity
 import android.os.Bundle
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_bookmark_view.*
 
 class BookmarkViewActivity : Activity() {
