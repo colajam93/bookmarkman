@@ -18,6 +18,7 @@ class Shortcut : Item, Serializable {
     var addDate: String = ""
     var lastVisit: String = ""
     var lastModified: String = ""
+    var icon: String = ""
 }
 
 class Subfolder : Item, Serializable {
@@ -208,6 +209,7 @@ class BookmarkParser(reader: BufferedReader) {
                     "add_date" -> shortcut.addDate = xpp.getAttributeValue(i)
                     "last_visit" -> shortcut.lastVisit = xpp.getAttributeValue(i)
                     "last_modified" -> shortcut.lastModified = xpp.getAttributeValue(i)
+                    "icon" -> shortcut.icon = xpp.getAttributeValue(i)
                 }
             }
         }
