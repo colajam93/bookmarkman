@@ -1,6 +1,8 @@
 package xyz.vrlk.bookmarkman
 
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.AdapterView
 import kotlinx.android.synthetic.main.activity_bookmark_view.*
@@ -24,6 +26,9 @@ class BookmarkViewActivity : Activity() {
                         adapterStack.add(listView.adapter as BookmarkItemAdapter)
                         val newAdapter = BookmarkItemAdapter(this, d.items)
                         listView.adapter = newAdapter
+                    } else if (d is Shortcut) {
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(d.url))
+                        startActivity(browserIntent)
                     }
                 })
     }
