@@ -4,15 +4,14 @@ import android.util.Xml
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.BufferedReader
-import java.io.Serializable
 
 interface Item
 
-class Items : Serializable {
+class Items {
     val items: MutableList<Item> = mutableListOf()
 }
 
-class Shortcut : Item, Serializable {
+class Shortcut : Item {
     var url: String = ""
     var title: String = ""
     var addDate: String = ""
@@ -21,7 +20,7 @@ class Shortcut : Item, Serializable {
     var icon: String = ""
 }
 
-class Subfolder : Item, Serializable {
+class Subfolder : Item {
     var title: String = ""
     var addDate: String = ""
     val items: MutableList<Item> = mutableListOf()
