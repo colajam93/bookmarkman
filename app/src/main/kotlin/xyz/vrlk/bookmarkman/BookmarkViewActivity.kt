@@ -21,15 +21,20 @@ class BookmarkViewActivity : Activity() {
         val uri = Uri.parse(uriString)
         val reader = contentResolver.openInputStream(uri).bufferedReader()
         val parser = BookmarkParser(reader)
-        var result = Items()
+        var result: MutableList<Item> = mutableListOf()
         try {
-            result = parser.parse()
+            result = parser.parse().items
         } catch (_: BookmarkParseException) {
             Toast.makeText(this, "Parse failed", Toast.LENGTH_SHORT).show()
         }
 
+        // if the bookmark only contains 1 subfolder at top level
+        // then expand it
+        if (result.size == 1 && result[0] is Subfolder) {
+            result = (result[0] as Subfolder).items
+        }
 
-        val adapter = BookmarkItemAdapter(this, result.items)
+        val adapter = BookmarkItemAdapter(this, result)
         listView.adapter = adapter
         listView.onItemClickListener = AdapterView.OnItemClickListener(
                 { parent, _, position, _ ->
