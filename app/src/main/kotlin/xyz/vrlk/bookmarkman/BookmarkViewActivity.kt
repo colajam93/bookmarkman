@@ -4,13 +4,14 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_bookmark_view.*
 
 class BookmarkViewActivity : Activity() {
 
-    private val adapterStack: MutableList<BookmarkItemAdapter> = mutableListOf()
+    private val adapterStack: MutableList<Triple<BookmarkItemAdapter, Int, Int>> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +36,15 @@ class BookmarkViewActivity : Activity() {
                     val parentAdapter = parent.adapter as BookmarkItemAdapter
                     val d = parentAdapter.items[position]
                     if (d is Subfolder) {
-                        adapterStack.add(listView.adapter as BookmarkItemAdapter)
+                        // save current ListView index and scroll offset
+                        val index = listView.firstVisiblePosition
+                        val v = listView.getChildAt(0) as View
+                        val top = v.top - listView.paddingTop
+                        adapterStack.add(Triple(listView.adapter as BookmarkItemAdapter, index, top))
                         val newAdapter = BookmarkItemAdapter(this, d.items)
                         listView.adapter = newAdapter
                     } else if (d is Shortcut) {
+                        // Open shortcut
                         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(d.url))
                         startActivity(browserIntent)
                     }
@@ -47,9 +53,11 @@ class BookmarkViewActivity : Activity() {
 
     override fun onBackPressed() {
         if (adapterStack.isNotEmpty()) {
+            // Restore previous adapter
             val previousAdapter = adapterStack.last()
             adapterStack.removeAt(adapterStack.size - 1)
-            listView.adapter = previousAdapter
+            listView.adapter = previousAdapter.first
+            listView.setSelectionFromTop(previousAdapter.second, previousAdapter.third)
         } else {
             super.onBackPressed()
         }
