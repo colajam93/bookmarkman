@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BookmarkMan</string>
+    <string name="open_bookmark_file">Open Bookmark File</string>
 </resources>
