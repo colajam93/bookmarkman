@@ -67,12 +67,12 @@ class BookmarkParser(reader: BufferedReader) {
         }
     }
 
-    fun parse(): Items? {
+    fun parse(): Items {
         if (!parseHeader()) {
-            return null
+            throw BookmarkParseException("Parse header failed")
         }
 
-        return parseItems()
+        return parseItems() ?: throw BookmarkParseException("Parse failed")
     }
 
     private fun parseHeader(): Boolean {
