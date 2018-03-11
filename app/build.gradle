@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 27
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "xyz.vrlk.bookmarkman"
         minSdkVersion 24
-        targetSdkVersion 24
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -21,6 +21,10 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+    lintOptions {
+        // We do not use Firebase App Indexing
+        disable 'GoogleAppIndexingWarning'
     }
 }
 

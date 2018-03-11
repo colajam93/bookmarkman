@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BookmarkMan</string>
     <string name="open_bookmark_file">Open Bookmark File</string>
+    <string name="description_of_list_view_icon">Icon of the shortcut</string>
 </resources>

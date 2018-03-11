@@ -11,12 +11,11 @@
         <ImageView
                 android:src="@android:drawable/sym_def_app_icon"
                 android:layout_height="25dp" android:id="@+id/imageView"
-                android:layout_width="25dp" android:scaleType="fitCenter" android:layout_gravity="center"
-                android:layout_weight="1"/>
+                android:layout_width="0dp" android:scaleType="fitCenter" android:layout_gravity="center"
+                android:layout_weight="1" android:contentDescription="@string/description_of_list_view_icon"/>
     </LinearLayout>
     <TextView
-            android:text="TextView"
             android:layout_width="match_parent"
             android:layout_height="50dp" android:id="@+id/textView" android:gravity="center_vertical"
-            android:textAlignment="viewStart" android:layout_marginLeft="5dp"/>
+            android:textAlignment="gravity" android:layout_marginStart="5dp"/>
 </LinearLayout>

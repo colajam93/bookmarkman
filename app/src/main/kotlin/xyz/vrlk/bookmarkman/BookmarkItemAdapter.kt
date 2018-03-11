@@ -26,12 +26,12 @@ class BookmarkItemAdapter(private val context: Context, val items: List<Item>) :
                 }
             } else {
                 view.imageView.setImageResource(R.drawable.ic_insert_drive_file_black_24dp)
-                view.imageView.setColorFilter(context.resources.getColor(R.color.colorGray))
+                view.imageView.setColorFilter(context.getColor(R.color.colorGray))
             }
         } else if (data is Subfolder) {
             view.textView.text = data.title
             view.imageView.setImageResource(R.drawable.ic_folder_black_24dp)
-            view.imageView.setColorFilter(context.resources.getColor(R.color.colorGray))
+            view.imageView.setColorFilter(context.getColor(R.color.colorGray))
         }
         return view
     }
