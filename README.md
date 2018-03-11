@@ -1,5 +1,7 @@
 # bookmarkman
 
+[![Build Status](https://travis-ci.org/colajam93/bookmarkman.svg?branch=master)](https://travis-ci.org/colajam93/bookmarkman)
+
 Netscape Bookmark File manager for Android using Kotlin
 
 ## Feature
