@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_bookmark_view.*
+import java.io.InputStream
 
 class BookmarkViewActivity : Activity() {
 
@@ -20,7 +21,22 @@ class BookmarkViewActivity : Activity() {
 
         val uriString = intent.getStringExtra(MainActivity.PREFERENCE_PREVIOUS_URI)
         val uri = Uri.parse(uriString)
-        val reader = contentResolver.openInputStream(uri).bufferedReader()
+
+        fun openStream(uri: Uri): InputStream? {
+            return try {
+                contentResolver.openInputStream(uri)
+            } catch (e: SecurityException) {
+                null
+            }
+        }
+
+        val stream = openStream(uri)
+        if (stream == null) {
+            Toast.makeText(this, "Cannot open stream.", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+        val reader = stream.bufferedReader()
         val parser = BookmarkParser(reader)
         var result: MutableList<Item> = mutableListOf()
         try {
