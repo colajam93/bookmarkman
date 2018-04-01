@@ -39,6 +39,8 @@ class MainActivity : Activity() {
                 Toast.makeText(this, "The uri was null", Toast.LENGTH_SHORT).show()
                 return
             }
+            val takeFlags = data.flags and Intent.FLAG_GRANT_READ_URI_PERMISSION
+            contentResolver.takePersistableUriPermission(uri, takeFlags)
 
             val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
             val editor = sharedPreferences.edit()
