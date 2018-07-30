@@ -1,6 +1,9 @@
 package xyz.vrlk.bookmarkman
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -75,6 +78,19 @@ class BookmarkViewActivity : Activity() {
                         }
                     }
                 })
+        listView.onItemLongClickListener = AdapterView.OnItemLongClickListener { parent, _, position, _ ->
+            val parentAdapter = parent.adapter as BookmarkItemAdapter
+            val d = parentAdapter.items[position]
+            if (d is Shortcut) {
+                val clipData = ClipData.newUri(contentResolver, d.title, Uri.parse(d.url))
+                val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboardManager.primaryClip = clipData
+                Toast.makeText(this, "URL has copied to clipboard", Toast.LENGTH_SHORT).show()
+                true
+            } else {
+                false
+            }
+        }
     }
 
     override fun onBackPressed() {
