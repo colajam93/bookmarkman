@@ -56,28 +56,27 @@ class BookmarkViewActivity : Activity() {
 
         val adapter = BookmarkItemAdapter(this, result)
         listView.adapter = adapter
-        listView.onItemClickListener = AdapterView.OnItemClickListener(
-                { parent, _, position, _ ->
-                    val parentAdapter = parent.adapter as BookmarkItemAdapter
-                    val d = parentAdapter.items[position]
-                    if (d is Subfolder) {
-                        // save current ListView index and scroll offset
-                        val index = listView.firstVisiblePosition
-                        val v = listView.getChildAt(0) as View
-                        val top = v.top - listView.paddingTop
-                        adapterStack.add(Triple(listView.adapter as BookmarkItemAdapter, index, top))
-                        val newAdapter = BookmarkItemAdapter(this, d.items)
-                        listView.adapter = newAdapter
-                    } else if (d is Shortcut) {
-                        // Open shortcut
-                        try {
-                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(d.url))
-                            startActivity(browserIntent)
-                        } catch (e: FileUriExposedException) {
-                            Toast.makeText(this, "Cannot open \"${d.url}\"", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                })
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
+            val parentAdapter = parent.adapter as BookmarkItemAdapter
+            val d = parentAdapter.items[position]
+            if (d is Subfolder) {
+                // save current ListView index and scroll offset
+                val index = listView.firstVisiblePosition
+                val v = listView.getChildAt(0) as View
+                val top = v.top - listView.paddingTop
+                adapterStack.add(Triple(listView.adapter as BookmarkItemAdapter, index, top))
+                val newAdapter = BookmarkItemAdapter(this, d.items)
+                listView.adapter = newAdapter
+            } else if (d is Shortcut) {
+                // Open shortcut
+                try {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(d.url))
+                    startActivity(browserIntent)
+                } catch (e: FileUriExposedException) {
+                    Toast.makeText(this, "Cannot open \"${d.url}\"", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         listView.onItemLongClickListener = AdapterView.OnItemLongClickListener { parent, _, position, _ ->
             val parentAdapter = parent.adapter as BookmarkItemAdapter
             val d = parentAdapter.items[position]
